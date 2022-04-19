@@ -58,13 +58,6 @@
         "description": "FortiGate Version"
       }
     },
-    "fortiGateAdditionalCustomData": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "The ARM template provides a basic configuration. Additional configuration can be added here."
-      }
-    },
     "instanceType": {
       "type": "string",
       "defaultValue": "Standard_F4s",
@@ -282,7 +275,7 @@
     },
     "vnetAddressPrefix": {
       "type": "string",
-      "defaultValue": "172.16.136.0/22",
+      "defaultValue": "10.0.0.0/16",
       "metadata": {
         "description": "Virtual Network Address prefix"
       }
@@ -296,14 +289,14 @@
     },
     "subnet1Prefix": {
       "type": "string",
-      "defaultValue": "172.16.136.0/26",
+      "defaultValue": "10.0.1.0/24",
       "metadata": {
         "description": "Subnet 1 Prefix"
       }
     },
     "subnet1StartAddress": {
       "type": "string",
-      "defaultValue": "172.16.136.4",
+      "defaultValue": "10.0.1.4",
       "metadata": {
         "description": "Subnet 1 start address, 2 consecutive private IPs are required"
       }
@@ -317,14 +310,14 @@
     },
     "subnet2Prefix": {
       "type": "string",
-      "defaultValue": "172.16.136.64/26",
+      "defaultValue": "10.0.2.0/24",
       "metadata": {
         "description": "Subnet 2 Prefix"
       }
     },
     "subnet2StartAddress": {
       "type": "string",
-      "defaultValue": "172.16.136.68",
+      "defaultValue": "10.0.2.4",
       "metadata": {
         "description": "Subnet 2 start address, 2 consecutive private IPs are required"
       }
@@ -338,14 +331,14 @@
     },
     "subnet3Prefix": {
       "type": "string",
-      "defaultValue": "172.16.136.128/26",
+      "defaultValue": "10.0.3.0/24",
       "metadata": {
         "description": "Subnet 3 Prefix"
       }
     },
     "subnet3StartAddress": {
       "type": "string",
-      "defaultValue": "172.16.136.132",
+      "defaultValue": "10.0.3.4",
       "metadata": {
         "description": "Subnet 3 start address, 2 consecutive private IPs are required"
       }
@@ -359,14 +352,14 @@
     },
     "subnet4Prefix": {
       "type": "string",
-      "defaultValue": "172.16.136.192/26",
+      "defaultValue": "10.0.4.0/24",
       "metadata": {
         "description": "Subnet 4 Prefix"
       }
     },
     "subnet4StartAddress": {
       "type": "string",
-      "defaultValue": "172.16.136.196",
+      "defaultValue": "10.0.4.4",
       "metadata": {
         "description": "Subnet 4 start address, 2 consecutive private IPs are required"
       }
@@ -380,7 +373,7 @@
     },
     "subnet5Prefix": {
       "type": "string",
-      "defaultValue": "172.16.137.0/24",
+      "defaultValue": "10.0.5.0/24",
       "metadata": {
         "description": "Subnet 5 Prefix"
       }
@@ -396,57 +389,32 @@
         "description": "Enable Serial Console"
       }
     },
-    "fortiManager": {
-      "type": "string",
-      "defaultValue": "no",
-      "allowedValues": [
-        "yes",
-        "no"
-      ],
-      "metadata": {
-        "description": "Connect to FortiManager"
-      }
-    },
-    "fortiManagerIP": {
+    "fgaConfigURI": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "FortiManager IP or DNS name to connect to on port TCP/541"
+        "description": "Primary FortiGate config URI"
       }
     },
-    "fortiManagerSerial": {
+    "fgaLicenseURI": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "FortiManager serial number to add the deployed FortiGate into the FortiManager"
+        "description": "Primary FortiGate BYOL license URI"
       }
     },
-    "fortiGateLicenseBYOLA": {
+    "fgbConfigURI": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Primary FortiGate BYOL license content"
+        "description": "Secondary FortiGate config URI"
       }
     },
-    "fortiGateLicenseBYOLB": {
+    "fgbLicenseURI": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Secondary FortiGate BYOL license content"
-      }
-    },
-    "fortiGateLicenseFlexVMA": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Primary FortiGate BYOL Flex-VM license token"
-      }
-    },
-    "fortiGateLicenseFlexVMB": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Secondary FortiGate BYOL Flex-VM license token"
+        "description": "Secondary FortiGate BYOL license URI"
       }
     },
     "location": {
@@ -479,18 +447,8 @@
     "subnet4Id": "[if(equals(parameters('vnetNewOrExisting'),'new'),resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'),parameters('subnet4Name')),resourceId(parameters('vnetResourceGroup'),'Microsoft.Network/virtualNetworks/subnets', variables('vnetName'),parameters('subnet4Name')))]",
     "fgaVmName": "[concat(parameters('fortiGateNamePrefix'),'-FGT-A')]",
     "fgbVmName": "[concat(parameters('fortiGateNamePrefix'),'-FGT-B')]",
-    "fmgCustomData": "[if(equals(parameters('fortiManager'),'yes'),concat('\nconfig system central-management\nset type fortimanager\n set fmg ',parameters('fortiManagerIP'),'\nset serial-number ', parameters('fortiManagerSerial'), '\nend\n config system interface\n edit port1\n append allowaccess fgfm\n end\n config system interface\n edit port2\n append allowaccess fgfm\n end\n'),'')]",
-    "fgaCustomDataFlexVM": "[if(equals(parameters('fortiGateLicenseFlexVMA'),''),'',concat('exec vm-license ',parameters('fortiGateLicenseFlexVMA'), '\n'))]",
-    "fgBCustomDataFlexVM": "[if(equals(parameters('fortiGateLicenseFlexVMB'),''),'',concat('exec vm-license ',parameters('fortiGateLicenseFlexVMB'), '\n'))]",
-    "customDataHeader": "Content-Type: multipart/mixed; boundary=\"12345\"\nMIME-Version: 1.0\n--12345\nContent-Type: text/plain; charset=\"us-ascii\"\nMIME-Version: 1.0\nContent-Transfer-Encoding: 7bit\nContent-Disposition: attachment; filename=\"config\"\n\n",
-    "fgaCustomDataBody": "[concat('config system sdn-connector\nedit AzureSDN\nset type azure\nnext\nend\nconfig router static\n edit 1\n set gateway ', variables('sn1GatewayIP'), '\n set device port1\n next\n edit 2\n set dst ', parameters('vnetAddressPrefix'), '\n set gateway ', variables('sn2GatewayIP'), '\n set device port2\n next\n edit 3\nset dst 168.63.129.16 255.255.255.255\nset device port2\n set gateway ', variables ('sn2GatewayIP'), '\n next\nedit 4\nset dst 168.63.129.16 255.255.255.255\nset device port1\n set gateway ', variables ('sn1GatewayIP'), '\n next\n end\n config system interface\n edit port1\n set mode static\n set ip ', variables('sn1IPfga'), '/', variables('sn1CIDRmask'), '\n set description external\n next\n edit port2\n set mode static\n set ip ', variables('sn2IPfga'), '/', variables('sn2CIDRmask'), '\n set description internal\n next\n edit port3\n set mode static\n set ip ', variables('sn3IPfga'), '/', variables('sn3CIDRmask'), '\n set description hasyncport\n next\n edit port4\n set mode static\n set ip ', variables('sn4IPfga'), '/', variables('sn4CIDRmask'), '\n set description management\n set allowaccess ping https ssh ftm\n next\n end\n config system ha\n set group-name AzureHA\n set mode a-p\n set hbdev port3 100\n set session-pickup enable\n set session-pickup-connectionless enable\n set ha-mgmt-status enable\n config ha-mgmt-interfaces\n edit 1\n set interface port4\n set gateway ', variables('sn4GatewayIP'),'\n next\n end\n set override disable\n set priority 255\n set unicast-hb enable\n set unicast-hb-peerip ', variables('sn3IPfgb'), '\n end\n', variables('fmgCustomData'), parameters('fortiGateAdditionalCustomData'), '\n', variables('fgaCustomDataFlexVM'), '\n')]",
-    "fgbCustomDataBody": "[concat('config system sdn-connector\nedit AzureSDN\nset type azure\nnext\nend\nconfig router static\n edit 1\n set gateway ', variables('sn1GatewayIP'), '\n set device port1\n next\n edit 2\n set dst ', parameters('vnetAddressPrefix'), '\n set gateway ', variables('sn2GatewayIP'), '\n set device port2\n next\n edit 3\nset dst 168.63.129.16 255.255.255.255\nset device port2\n set gateway ', variables ('sn2GatewayIP'), '\n next\nedit 4\nset dst 168.63.129.16 255.255.255.255\nset device port1\n set gateway ', variables ('sn1GatewayIP'), '\n next\n end\n config system interface\n edit port1\n set mode static\n set ip ', variables('sn1IPfgb'), '/', variables('sn1CIDRmask'), '\n set description external\n next\n edit port2\n set mode static\n set ip ', variables('sn2IPfgb'), '/', variables('sn2CIDRmask'), '\n set description internal\n next\n edit port3\n set mode static\n set ip ', variables('sn3IPfgb'), '/', variables('sn3CIDRmask'), '\n set description hasyncport\n next\n edit port4\n set mode static\n set ip ', variables('sn4IPfgb'), '/', variables('sn4CIDRmask'), '\n set description management\n set allowaccess ping https ssh ftm\n next\n end\n config system ha\n set group-name AzureHA\n set mode a-p\n set hbdev port3 100\n set session-pickup enable\n set session-pickup-connectionless enable\n set ha-mgmt-status enable\n config ha-mgmt-interfaces\n edit 1\n set interface port4\n set gateway ', variables('sn4GatewayIP'),'\n next\n end\n set override disable\n set priority 1\n set unicast-hb enable\n set unicast-hb-peerip ', variables('sn3IPfga'), '\n end\n', variables('fmgCustomData'), parameters('fortiGateAdditionalCustomData'), '\n', variables('fgbCustomDataFlexVM'), '\n')]",
-    "customDataLicenseHeader": "--12345\nContent-Type: text/plain; charset=\"us-ascii\"\nMIME-Version: 1.0\nContent-Transfer-Encoding: 7bit\nContent-Disposition: attachment; filename=\"fgtlicense\"\n\n",
-    "customDataFooter": "--12345--\n",
-    "fgaCustomDataCombined": "[concat(variables('customDataHeader'),variables('fgaCustomDataBody'),variables('customDataLicenseHeader'), parameters('fortiGateLicenseBYOLA'), variables('customDataFooter'))]",
-    "fgbCustomDataCombined": "[concat(variables('customDataHeader'),variables('fgbCustomDataBody'),variables('customDataLicenseHeader'), parameters('fortiGateLicenseBYOLB'), variables('customDataFooter'))]",
-    "fgaCustomData": "[base64(if(equals(parameters('fortiGateLicenseBYOLA'),''),variables('fgaCustomDataBody'),variables('fgaCustomDataCombined')))]",
-    "fgbCustomData": "[base64(if(equals(parameters('fortiGateLicenseBYOLB'),''),variables('fgbCustomDataBody'),variables('fgbCustomDataCombined')))]",
+    "userDataA": "[concat('{\"config-url\": \"', parameters('fgaConfigURI'), '\",\n' , '\"license-url\": \"', parameters('fgaLicenseURI'), '\"}\n')]",
+    "userDataB": "[concat('{\"config-url\": \"', parameters('fgbConfigURI'), '\",\n' , '\"license-url\": \"', parameters('fgbLicenseURI'), '\"}\n')]",
     "routeTableName": "[concat(parameters('fortiGateNamePrefix'),'-RouteTable-',parameters('subnet5Name'))]",
     "routeTableId": "[resourceId('Microsoft.Network/routeTables',variables('routeTableName'))]",
     "fgaNic1Name": "[concat(variables('fgaVmName'),'-Nic1')]",
@@ -1079,7 +1037,7 @@
           "computerName": "[variables('fgaVmName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]",
-          "customData": "[variables('fgaCustomData')]"
+          "customData": "[base64(variables('userDataA'))]"
         },
         "storageProfile": {
           "imageReference": {
@@ -1167,7 +1125,7 @@
           "computerName": "[variables('fgbVmName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]",
-          "customData": "[variables('fgbCustomData')]"
+          "customData": "[base64(variables('userDataB'))]"
         },
         "storageProfile": {
           "imageReference": {
