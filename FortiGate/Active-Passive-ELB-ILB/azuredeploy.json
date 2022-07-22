@@ -35,23 +35,9 @@
       "type": "string",
       "defaultValue": "latest",
       "allowedValues": [
-        "6.2.0",
-        "6.2.2",
-        "6.2.4",
-        "6.2.5",
-        "6.4.0",
-        "6.4.2",
-        "6.4.3",
-        "6.4.5",
+        "6.0.2",
+        "6.0.3",
         "6.4.6",
-        "6.4.7",
-        "6.4.8",
-        "7.0.0",
-        "7.0.1",
-        "7.0.2",
-        "7.0.3",
-        "7.0.4",
-        "7.0.5",
         "latest"
       ],
       "metadata": {
@@ -87,28 +73,6 @@
       ],
       "metadata": {
         "description": "Virtual Machine size selection - must be F4 or other instance that supports 4 NICs"
-      }
-    },
-    "availabilityOptions": {
-      "type": "string",
-      "allowedValues": [
-        "Availability Set",
-        "Availability Zones"
-      ],
-      "defaultValue": "Availability Set",
-      "metadata": {
-        "description": "Deploy FortiGate VMs in an Availability Set or Availability Zones. If Availability Zones deployment is selected but the location does not support Availability Zones an Availability Set will be deployed. If Availability Zones deployment is selected and Availability Zones are available in the location, FortiGate A will be placed in Zone 1, FortiGate B will be placed in Zone 2"
-      }
-    },
-    "acceleratedNetworking": {
-      "type": "string",
-      "defaultValue": "true",
-      "allowedValues": [
-        "true",
-        "false"
-      ],
-      "metadata": {
-        "description": "Accelerated Networking enables direct connection between the VM and network card. Only available on 2 CPU F/Fs and 4 CPU D/Dsv2, D/Dsv3, E/Esv3, Fsv2, Lsv2, Ms/Mms and Ms/Mmsv2"
       }
     },
     "publicIP1NewOrExisting": {
@@ -215,7 +179,7 @@
     },
     "vnetAddressPrefix": {
       "type": "string",
-      "defaultValue": "172.16.136.0/22",
+      "defaultValue": "10.0.0.0/16",
       "metadata": {
         "description": "Virtual Network Address prefix"
       }
@@ -229,37 +193,37 @@
     },
     "subnet1Prefix": {
       "type": "string",
-      "defaultValue": "172.16.136.0/26",
+      "defaultValue": "10.0.0.0/24",
       "metadata": {
         "description": "Subnet 1 Prefix"
       }
     },
     "subnet1StartAddress": {
       "type": "string",
-      "defaultValue": "172.16.136.4",
+      "defaultValue": "10.0.0.4",
       "metadata": {
         "description": "Subnet 1 start address, 2 consecutive private IPs are required"
       }
     },
     "subnet2Name": {
       "type": "string",
-      "defaultValue": "InternalSubnet",
+      "defaultValue": "TransitSubnet",
       "metadata": {
         "description": "Subnet 2 Name"
       }
     },
     "subnet2Prefix": {
       "type": "string",
-      "defaultValue": "172.16.136.64/26",
+      "defaultValue": "10.0.1.0/24",
       "metadata": {
         "description": "Subnet 2 Prefix"
       }
     },
     "subnet2StartAddress": {
       "type": "string",
-      "defaultValue": "172.16.136.68",
+      "defaultValue": "10.0.1.4",
       "metadata": {
-        "description": "Subnet 2 start address, 3 consecutive private IPs are required"
+        "description": "Subnet 2 start address, 2 consecutive private IPs are required"
       }
     },
     "subnet3Name": {
@@ -271,14 +235,14 @@
     },
     "subnet3Prefix": {
       "type": "string",
-      "defaultValue": "172.16.136.128/26",
+      "defaultValue": "10.0.2.0/24",
       "metadata": {
         "description": "Subnet 3 Prefix"
       }
     },
     "subnet3StartAddress": {
       "type": "string",
-      "defaultValue": "172.16.136.132",
+      "defaultValue": "10.0.2.4",
       "metadata": {
         "description": "Subnet 3 start address, 2 consecutive private IPs are required"
       }
@@ -292,41 +256,30 @@
     },
     "subnet4Prefix": {
       "type": "string",
-      "defaultValue": "172.16.136.192/26",
+      "defaultValue": "10.0.3.0/24",
       "metadata": {
         "description": "Subnet 4 Prefix"
       }
     },
     "subnet4StartAddress": {
       "type": "string",
-      "defaultValue": "172.16.136.196",
+      "defaultValue": "10.0.3.4",
       "metadata": {
         "description": "Subnet 4 start address, 2 consecutive private IPs are required"
       }
     },
     "subnet5Name": {
       "type": "string",
-      "defaultValue": "ProtectedASubnet",
+      "defaultValue": "ProtectedSubnet",
       "metadata": {
         "description": "Subnet 5 Name"
       }
     },
     "subnet5Prefix": {
       "type": "string",
-      "defaultValue": "172.16.137.0/24",
+      "defaultValue": "10.0.4.0/24",
       "metadata": {
         "description": "Subnet 5 Prefix"
-      }
-    },
-    "serialConsole": {
-      "type": "string",
-      "defaultValue": "yes",
-      "allowedValues": [
-        "yes",
-        "no"
-      ],
-      "metadata": {
-        "description": "Enable Serial Console"
       }
     },
     "fortiManager": {
@@ -442,9 +395,6 @@
     "fgaNic4Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('fgaNic4Name'))]",
     "fgbNic4Name": "[concat(variables('fgbVmName'),'-Nic4')]",
     "fgbNic4Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('fgbNic4Name'))]",
-    "serialConsoleStorageAccountName": "[concat('console', uniquestring(resourceGroup().id))]",
-    "serialConsoleStorageAccountType": "Standard_LRS",
-    "serialConsoleEnabled": "[if(equals(parameters('serialConsole'),'yes'),'true','false')]",
     "publicIP1Name": "[if(equals(parameters('publicIP1Name'),''),concat(parameters('fortiGateNamePrefix'),'-FGT-PIP'),parameters('publicIP1Name'))]",
     "publicIP1Id": "[if(equals(parameters('publicIP1NewOrExisting'),'new'),resourceId('Microsoft.Network/publicIPAddresses',variables('publicIP1Name')),resourceId(parameters('publicIP1ResourceGroup'),'Microsoft.Network/publicIPAddresses',variables('publicIP1Name')))]",
     "publicIP2Name": "[if(equals(parameters('publicIP2Name'),''),concat(parameters('fortiGateNamePrefix'),'-FGT-A-MGMT-PIP'),parameters('publicIP2Name'))]",
@@ -532,7 +482,7 @@
   },
   "resources": [
     {
-      "apiVersion": "2020-10-01",
+      "apiVersion": "2020-06-01",
       "name": "[concat(parameters('fortiGateNamePrefix'), '-fortinetdeployment-', uniquestring(resourceGroup().id))]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -545,20 +495,8 @@
       }
     },
     {
-      "condition": "[equals(parameters('serialConsole'), 'yes')]",
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('serialConsoleStorageAccountName')]",
-      "apiVersion": "2021-02-01",
-      "location": "[parameters('location')]",
-      "kind": "Storage",
-      "sku": {
-        "name": "[variables('serialConsoleStorageAccountType')]"
-      }
-    },
-    {
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2020-06-01",
       "type": "Microsoft.Compute/availabilitySets",
-      "condition": "[not(variables('useAZ'))]",
       "name": "[variables('availabilitySetName')]",
       "location": "[parameters('location')]",
       "tags": {
@@ -575,7 +513,7 @@
     {
       "type": "Microsoft.Network/routeTables",
       "name": "[variables('routeTableName')]",
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
@@ -596,7 +534,7 @@
     {
       "condition": "[equals(parameters('vnetNewOrExisting'), 'new')]",
       "type": "Microsoft.Network/virtualNetworks",
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "name": "[variables('vnetName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
@@ -646,7 +584,7 @@
       }
     },
     {
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "type": "Microsoft.Network/loadBalancers",
       "name": "[variables('internalLBName')]",
       "location": "[parameters('location')]",
@@ -654,7 +592,7 @@
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
       "sku": {
-        "name": "Standard"
+        "name": "Basic"
       },
       "dependsOn": [
         "[variables('vnetName')]"
@@ -712,7 +650,7 @@
       }
     },
     {
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
@@ -755,14 +693,14 @@
     {
       "condition": "[equals(parameters('publicIP1NewOrExisting'), 'new')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
       "name": "[variables('publicIP1Name')]",
       "location": "[parameters('location')]",
       "sku": {
-        "name": "Standard"
+        "name": "Basic"
       },
       "properties": {
         "publicIPAllocationMethod": "Static",
@@ -774,14 +712,14 @@
     {
       "condition": "[equals(parameters('publicIP2NewOrExisting'), 'new')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
       "name": "[variables('publicIP2Name')]",
       "location": "[parameters('location')]",
       "sku": {
-        "name": "Standard"
+        "name": "Basic"
       },
       "properties": {
         "publicIPAllocationMethod": "Static"
@@ -790,21 +728,21 @@
     {
       "condition": "[equals(parameters('publicIP3NewOrExisting'), 'new')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
       "name": "[variables('publicIP3Name')]",
       "location": "[parameters('location')]",
       "sku": {
-        "name": "Standard"
+        "name": "Basic"
       },
       "properties": {
         "publicIPAllocationMethod": "Static"
       }
     },
     {
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "type": "Microsoft.Network/loadBalancers",
       "name": "[variables('externalLBName')]",
       "location": "[parameters('location')]",
@@ -812,7 +750,7 @@
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
       "sku": {
-        "name": "Standard"
+        "name": "Basic"
       },
       "dependsOn": [
         "[variables('publicIP1Name')]"
@@ -887,7 +825,7 @@
       }
     },
     {
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
@@ -903,7 +841,7 @@
         "ipConfigurations": [
           {
             "name": "ipconfig1",
-            "properties": {
+            "propertieCde#s": {
               "privateIPAddress": "[variables('sn1IPfga')]",
               "privateIPAllocationMethod": "Static",
               "subnet": {
@@ -925,7 +863,7 @@
       }
     },
     {
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
@@ -956,14 +894,13 @@
           }
         ],
         "enableIPForwarding": true,
-        "enableAcceleratedNetworking": "[parameters('acceleratedNetworking')]",
         "networkSecurityGroup": {
           "id": "[variables('NSGId')]"
         }
       }
     },
     {
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
@@ -993,14 +930,13 @@
           }
         ],
         "enableIPForwarding": true,
-        "enableAcceleratedNetworking": "[parameters('acceleratedNetworking')]",
         "networkSecurityGroup": {
           "id": "[variables('NSGId')]"
         }
       }
     },
     {
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
@@ -1030,14 +966,13 @@
           }
         ],
         "enableIPForwarding": true,
-        "enableAcceleratedNetworking": "[parameters('acceleratedNetworking')]",
         "networkSecurityGroup": {
           "id": "[variables('NSGId')]"
         }
       }
     },
     {
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
@@ -1061,14 +996,13 @@
           }
         ],
         "enableIPForwarding": true,
-        "enableAcceleratedNetworking": "[parameters('acceleratedNetworking')]",
         "networkSecurityGroup": {
           "id": "[variables('NSGId')]"
         }
       }
     },
     {
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
@@ -1092,14 +1026,13 @@
           }
         ],
         "enableIPForwarding": true,
-        "enableAcceleratedNetworking": "[parameters('acceleratedNetworking')]",
         "networkSecurityGroup": {
           "id": "[variables('NSGId')]"
         }
       }
     },
     {
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
@@ -1124,14 +1057,13 @@
           }
         ],
         "enableIPForwarding": true,
-        "enableAcceleratedNetworking": "[parameters('acceleratedNetworking')]",
         "networkSecurityGroup": {
           "id": "[variables('NSGId')]"
         }
       }
     },
     {
-      "apiVersion": "2020-04-01",
+      "apiVersion": "2018-11-01",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
@@ -1156,24 +1088,19 @@
           }
         ],
         "enableIPForwarding": true,
-        "enableAcceleratedNetworking": "[parameters('acceleratedNetworking')]",
         "networkSecurityGroup": {
           "id": "[variables('NSGId')]"
         }
       }
     },
     {
-      "apiVersion": "2021-07-01",
+      "apiVersion": "2020-06-01",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('fgaVmName')]",
       "location": "[parameters('location')]",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
-      "identity": {
-        "type": "SystemAssigned"
-      },
-      "zones": "[if(variables('useAZ'), variables('zone1'), json('null'))]",
       "plan": {
         "name": "[parameters('fortiGateImageSKU')]",
         "publisher": "[variables('imagePublisher')]",
@@ -1241,27 +1168,17 @@
               "id": "[variables('fgaNic4Id')]"
             }
           ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": "[variables('serialConsoleEnabled')]",
-            "storageUri": "[if(equals(parameters('serialConsole'), 'yes'), reference(variables('serialConsoleStorageAccountName'), '2021-08-01').primaryEndpoints['blob'], json('null'))]"
-          }
         }
       }
     },
     {
-      "apiVersion": "2021-07-01",
+      "apiVersion": "2020-06-01",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('fgbVmName')]",
       "location": "[parameters('location')]",
       "tags": {
         "provider": "[toUpper(parameters('fortinetTags').provider)]"
       },
-      "identity": {
-        "type": "SystemAssigned"
-      },
-      "zones": "[if(variables('useAZ'), variables('zone2'), json('null'))]",
       "plan": {
         "name": "[parameters('fortiGateImageSKU')]",
         "publisher": "[variables('imagePublisher')]",
@@ -1329,12 +1246,6 @@
               "id": "[variables('fgbNic4Id')]"
             }
           ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": "[variables('serialConsoleEnabled')]",
-            "storageUri": "[if(equals(parameters('serialConsole'), 'yes'), reference(variables('serialConsoleStorageAccountName'), '2021-08-01').primaryEndpoints['blob'], json('null'))]"
-          }
         }
       }
     }
